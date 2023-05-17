@@ -10,7 +10,7 @@
     <h1>Login</h1>
     <form id="loginForm">
       <div class="form-group">
-        <label for="username">Username:</label>
+        <label for="username">Username or Email:</label>
         <input type="text" id="username" name="username" required>
       </div>
       <div class="form-group">
@@ -19,6 +19,7 @@
       </div>
       <button type="submit" class="login-button">Login</button>
     </form>
+    <p class="register-link">Don't have an account? <a href="register.html">Register</a></p>
   </div>
 
   <script src="script.js"></script>
