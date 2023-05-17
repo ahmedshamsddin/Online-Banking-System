@@ -24,25 +24,60 @@
   <div class="register-container">
     <h1>Register</h1>
     <form id="registerForm">
+    <div class="form-group">
+          <label for="birthdate">Birth Date:</label>
+          <input type="text" id="datepicker" name="birthdate" required>
+        </div>
+        <div class="form-row">
+<div class="form-group">
+<label for="accountType">Account Type:</label>
+<select id="accountType" name="accountType">
+<option value="current">Current Account</option>
+<option value="savings">Savings Account</option>
+<option value="business">Business Account</option>
+</select>
+</div>
+<div class="form-group">
+<label for="occupation">Occupation:</label>
+<select id="occupation" name="occupation">
+<option value="student">Student</option>
+<option value="employee">Employee</option>
+<option value="businessman">Businessman</option>
+</select>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label for="photo">Personal Photo:</label>
+<input type="file" id="photo" name="photo">
+</div>
+<div class="form-group">
+<label for="salaryCertificate">Salary Certificate:</label>
+<input type="file" id="salaryCertificate" name="salaryCertificate">
+</div>
+</div>
+
       <div class="form-row">
         <div class="form-group">
           <label for="username">Username:</label>
           <input type="text" id="username" name="username" required>
         </div>
         <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        
+      </div>
+      <div class="form-row">
+      <div class="form-group">
           <label for="firstName">First Name:</label>
           <input type="text" id="firstName" name="firstName" required>
         </div>
-      </div>
-      <div class="form-row">
         <div class="form-group">
           <label for="lastName">Last Name:</label>
           <input type="text" id="lastName" name="lastName" required>
         </div>
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" id="password" name="password" required>
-        </div>
+        
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -76,29 +111,15 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="building">Building Name or Compound Name:</label>
-          <input type
+          <label for="building">Building /Compound Name:</label>
+          <input type="text" id="building" name="building" required>
+        </div>
+        <div class="form-group">
+          <label for="department">Department Number:</label>
+          <input type="text" id="department" name="department" required>
+</div>
+</div>
 
-          ="text" id="building" name="building" required>
-</div>
-<div class="form-group">
-<label for="department">Department Number:</label>
-<input type="text" id="department" name="department" required>
-</div>
-</div>
-<div class="form-row">
-
-<div class="form-group">
-<label for="photo">Personal Photo:</label>
-<input type="file" id="photo" name="photo">
-</div>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label for="salaryCertificate">Salary Certificate:</label>
-<input type="file" id="salaryCertificate" name="salaryCertificate">
-</div>
-</div>
 <button type="submit" class="register-button">Register</button>
 <p id="errorMessage" class="error-message"></p>
 <p id="successMessage" class="success-message"></p>
