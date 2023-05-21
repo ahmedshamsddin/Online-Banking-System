@@ -1,3 +1,3 @@
 # Online-Banking-System
 
-#aziz k
+# A banking system project
