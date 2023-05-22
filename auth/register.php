@@ -67,13 +67,14 @@ if (isset($_POST['submit'])) {
         <input type="text" id="lastName" name="lastName" required>
       </div>
       <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Repeat Password:</label>
-        <input type="password" id="password" name="repeatPassword" required>
-      </div>
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required>
+</div>
+<div class="form-group">
+  <label for="password">Repeat Password:</label>
+  <input type="password" id="repeatPassword" name="repeatPassword" required>
+  <button type="button" id="showPasswordBtn" onclick="togglePasswordVisibility()">Show Password</button>
+</div>
       <div class="form-group">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
@@ -132,6 +133,22 @@ if (isset($_POST['submit'])) {
       document.getElementById("fileUploadLabel").innerHTML = "Trade License:";
     } else {
       fileUploadContainer.style.display = "none";
+    }
+  }
+
+  function togglePasswordVisibility() {
+    var passwordInput = document.getElementById("password");
+    var repeatPasswordInput = document.getElementById("repeatPassword");
+    var showPasswordBtn = document.getElementById("showPasswordBtn");
+
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      repeatPasswordInput.type = "text";
+      showPasswordBtn.textContent = "Hide Password";
+    } else {
+      passwordInput.type = "password";
+      repeatPasswordInput.type = "password";
+      showPasswordBtn.textContent = "Show Password";
     }
   }
 

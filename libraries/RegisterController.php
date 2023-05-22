@@ -56,7 +56,7 @@ use function PHPSTORM_META\type;
             $uppercase = preg_match("@[A-Z]@", $this->password);
             $lowercase = preg_match("@[a-z]@", $this->password);
             $number    = preg_match("@[0-9]@", $this->password);
-            $specialChars = preg_match("/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/", $this->password);
+            $specialChars = strpbrk($this->password, "#$%^&*()+=-[]';,./{}|:<>?~");
 
             return (!$uppercase 
                 || !$lowercase 
@@ -73,7 +73,12 @@ use function PHPSTORM_META\type;
         // Check if the date of birth is invalid
         private function invalidDOB () {
             $regex = "/^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/";
-            return preg_match($regex, $this->dob) !== 1 ? true : false;
+            /*return preg_match($regex, $this->dob) !== 1 ? true : false;*/
+            if (preg_match($regex, $this->dob) !== 1) {
+                return true;
+            } else {
+                return $this->age() == true ? true : false;
+            }
         }
         // Check if user is not 18 years old or older
         private function age() {
@@ -169,7 +174,7 @@ use function PHPSTORM_META\type;
                 array_push($errors, "Invalid email");
             }
             if ($this->invalidPassword() == true) {
-                array_push($errors, "Invalid password (Password must be: at least 8 characters, 1 capital letter, 1 small letter, 1 digit)");
+                array_push($errors, "Invalid password (Password must be: at least 8 characters, 1 capital letter, 1 small letter, 1 digit, 1 special character)");
             }
             if ($this->passwordsNotMatching() == true) {
                 array_push($errors, "Passwords do not match");
@@ -178,10 +183,7 @@ use function PHPSTORM_META\type;
                 array_push($errors, "Invalid phone number format");
             }
             if ($this->invalidDOB() == true) {
-                array_push($errors, "Invalid date. Date must be in the format DD/MM/YYYY");
-            }
-            if ($this->age() == true) {
-                array_push($errors, "You must be at least 18 years old to register");
+                array_push($errors, "Invalid date. Date must be in the format DD/MM/YYYY and you must be 18 years old or older");
             }
             if ($this->invalidIDNumber() == true) {
                 array_push($errors, "This ID number is invalid");
