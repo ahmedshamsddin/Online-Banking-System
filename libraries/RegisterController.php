@@ -56,7 +56,7 @@ use function PHPSTORM_META\type;
             $uppercase = preg_match("@[A-Z]@", $this->password);
             $lowercase = preg_match("@[a-z]@", $this->password);
             $number    = preg_match("@[0-9]@", $this->password);
-            $specialChars = strpbrk($this->password, "#$%^&*()+=-[]';,./{}|:<>?~");
+            $specialChars = strpbrk($this->password, "!@#$%^&*()+=[]';,./{}|:<>?~");
 
             return (!$uppercase 
                 || !$lowercase 
