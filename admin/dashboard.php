@@ -1,3 +1,12 @@
+<?php
+  session_start();
+  session_regenerate_id();
+  if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+  }
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -76,6 +85,7 @@
   <body>
     <header>
       <h1>Admin Dashboard</h1>
+      <button><a href="logout.php">Logout</a></button>
     </header>
     <nav>
       <ul>

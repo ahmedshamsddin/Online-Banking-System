@@ -1,3 +1,50 @@
+<?php
+  session_start();
+  if (isset($_SESSION['user_id'])) {
+    header("Location: ../homepage/index.php");
+    exit();
+  }
+
+  if (isset($_SESSION['user_id'])) {
+    header("Location: ../homepage/index.php");
+    exit();
+  }
+
+  if (isset($_POST['submit'])) {
+    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
+    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
+
+    require_once '../libraries/DB.php';
+    
+    $db = new DB();
+    $sql = "SELECT username FROM admins WHERE username = ?";
+    $stmt = $db->connect()->prepare($sql);
+    if(!$stmt->execute(array($username))) {
+      $stmt = null;
+      exit();
+    };
+
+    if ($stmt->rowCount() > 0) {
+      $sql = "SELECT pwd_hash FROM admins WHERE username = ?";
+      $stmt = $db->connect()->prepare($sql);
+      if(!$stmt->execute(array($username))) {
+        $stmt = null;
+        exit();
+      };
+      $hash = $stmt->fetchAll(PDO::FETCH_ASSOC)[0]["pwd_hash"];
+      if (password_verify($password, $hash)) {
+        session_start();
+        $_SESSION['admin'] = $username;
+        header('location: dashboard.php');
+      } else {
+        echo "<script>alert('Incorrect password')</script>";
+      }
+    } else {
+      echo "<script>alert('Incorrect username')</script>";
+    }
+  }
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,19 +110,11 @@
   <div class="container">
     <div class="login-card">
       <h2>Admin Login</h2>
-      <form action="login.php" method="post">
+      <form method="POST">
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
+        <button type="submit" name="submit">Login</button>
       </form>
-      <?php
-        if (isset($_GET['error'])) {
-          $error = $_GET['error'];
-          if ($error === 'invalid_credentials') {
-            echo '<p class="error-message">Invalid username or password</p>';
-          }
-        }
-      ?>
     </div>
   </div>
 </body>

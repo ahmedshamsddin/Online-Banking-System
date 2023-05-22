@@ -106,7 +106,7 @@ if (isset($_POST['submit'])) {
         </div>
       <div class="form-group">
         <label for="photo">Personal Photo:</label>
-        <input type="file" id="photo" name="photo" required>
+        <input type="file" id="photo" name="photo">
       </div>
        
 
