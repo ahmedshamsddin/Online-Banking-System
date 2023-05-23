@@ -12,10 +12,45 @@ if (isset($_POST['submit'])) {
   $dob = $_POST['dob'];
   $phoneNumber = $_POST['phoneNumber'];
   $occupation = $_POST['occupation'];
+  $personalPhoto = $_FILES['photo'];
+  
+  if (is_uploaded_file($personalPhoto['tmp_name'])) {
+    $personalPhotoName = $personalPhoto['name'];
+    $personalPhotoTmpName = $personalPhoto['tmp_name'];
+    $personalPhotoSize = $personalPhoto['size'];
+    $personalPhotoError = $personalPhoto['error'];
+    $personalPhotoType = $personalPhoto['type'];
+    
+    $personalPhotoExt = explode('.', $personalPhotoName);
+    $personalPhotoActualExt = strtolower(end($personalPhotoExt));
+    
+    $allowed = array('jpg', 'jpeg', 'png');
+    
+    if (in_array($personalPhotoActualExt, $allowed)) {
+      if ($personalPhotoError === 0) {
+        if ($personalPhotoSize < 5000000) {
+          $personalPhotoNameNew = uniqid('', true) . "." . $personalPhotoActualExt;
+          $personalPhotoDestination = '../upload/profile_picture/' . $personalPhotoNameNew;
+          move_uploaded_file($personalPhotoTmpName, $personalPhotoDestination);
+        } else {
+          echo '<div class="alert alert-danger mt-2 text-center" role="alert">Your photo is too big!</div>';
+          exit();
+        }
+      } else {
+        echo '<div class="alert alert-danger mt-2 text-center" role="alert">There was an error uploading your photo!</div>';
+        exit();
+      }
+    } else {
+      echo '<div class="alert alert-danger mt-2 text-center" role="alert">You cannot upload files of this type!</div>';
+      exit();
+    }
+}
   
   require_once '../libraries/RegisterController.php';
-  $register = new RegisterController($username, $fullName, $password, $repeatPassword, $email, $idNumber, $dob, $phoneNumber, $occupation);
-  
+
+  $personalPhotoNameNew = $personalPhotoNameNew ?? null;
+  $register = new RegisterController($username, $fullName, $password, $repeatPassword, $email, $idNumber, $dob, $phoneNumber, $occupation, $personalPhotoNameNew);
+
   if (count($register->registerUser()) > 0) {
     foreach ($register->registerUser() as $error) {
       echo '<div class="alert alert-danger mt-2 text-center" role="alert">' . $error . '</div>';
@@ -53,7 +88,7 @@ if (isset($_POST['submit'])) {
 
   <div class="register-container">
     <h1>Register</h1>
-    <form id="registerForm" method="POST">
+    <form id="registerForm" method="POST" enctype="multipart/form-data">
       <div class="form-group">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
@@ -107,7 +142,7 @@ if (isset($_POST['submit'])) {
         </div>
       <div class="form-group">
         <label for="photo">Personal Photo:</label>
-        <input type="file" id="photo" name="photo">
+        <input type="file" name="photo">
       </div>
        
 

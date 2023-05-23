@@ -1,12 +1,9 @@
 <?php
   session_start();
   if (isset($_SESSION['user_id'])) {
-    header("Location: ../homepage/index.php");
-    exit();
-  }
-
-  if (isset($_SESSION['user_id'])) {
-    header("Location: ../homepage/index.php");
+    session_unset();
+    session_destroy();
+    header("Location: login.php");
     exit();
   }
 

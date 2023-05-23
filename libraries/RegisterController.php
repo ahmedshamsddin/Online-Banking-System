@@ -16,9 +16,10 @@ use function PHPSTORM_META\type;
         private $dob;
         private $phoneNumber;
         private $occupation;
+        private $personalPhoto;
         
         // Constructor for the RegisterController class
-        public function __construct($username, $fullName, $password, $repeatPassword, $email, $idNumber, $dob, $phoneNumber, $occupation) {
+        public function __construct($username, $fullName, $password, $repeatPassword, $email, $idNumber, $dob, $phoneNumber, $occupation, $personalPhoto) {
             $this->username = $username;
             $this->fullName = $fullName;
             $this->password = $password;
@@ -28,6 +29,7 @@ use function PHPSTORM_META\type;
             $this->dob = $dob;
             $this->phoneNumber = $phoneNumber;
             $this->occupation = $occupation;
+            $this->personalPhoto = $personalPhoto;
         }
         // Check if any of the inputs are empty
         private function emptyInput () {
@@ -160,6 +162,9 @@ use function PHPSTORM_META\type;
                 }
             }
         }
+        private function invalidPersonalPhoto () {
+            
+        }
         // Check if the all input is valid
         private function validInput () {
             $errors = [];
@@ -188,6 +193,9 @@ use function PHPSTORM_META\type;
             if ($this->invalidIDNumber() == true) {
                 array_push($errors, "This ID number is invalid");
             }
+            if ($this->personalPhoto == null) {
+                array_push($errors, "You must upload a personal photo");
+            }
             return $errors;
         }
         // Get the user's ID
@@ -208,7 +216,7 @@ use function PHPSTORM_META\type;
             // Check if the all input is valid
             if (count($this->validInput()) == 0) {
                 // Insert the user into the database
-                $stmt = $this->connect()->prepare('INSERT INTO users (username, pwd_hash, email, full_name, dob, phone_number, id_number) VALUES (?, ?, ?, ?, ?, ?, ?);');
+                $stmt = $this->connect()->prepare('INSERT INTO users (username, pwd_hash, email, full_name, dob, phone_number, id_number, personal_photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);');
                 // Hash the password
                 $hashed_pwd = password_hash($this->password, PASSWORD_DEFAULT);
                 // Encrypt the ID number
@@ -221,7 +229,7 @@ use function PHPSTORM_META\type;
                 // Remove spaces from phone number
                 $formattedPhoneNumber = str_replace(' ', '', $this->phoneNumber);
 
-                if (!$stmt->execute(array($this->username, $hashed_pwd, $this->email, $this->fullName, $formattedDOB, $formattedPhoneNumber, $encryptedIDNumber))) {
+                if (!$stmt->execute(array($this->username, $hashed_pwd, $this->email, $this->fullName, $formattedDOB, $formattedPhoneNumber, $encryptedIDNumber, $this->personalPhoto))) {
                     $stmt = null;
                     exit();
                 }

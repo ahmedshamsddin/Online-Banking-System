@@ -23,7 +23,7 @@
     <div class="user-info">
     <div class="user-photo">
         
-        <img id="photo" src="1.jpg" alt="User Photo">
+        <img id="photo" src="../upload/profile_picture/<?php echo $userDetails['personal_photo'] ?>" alt="User Photo">
       </div>
       <div class="user-account">
         <label for="account">ID Number:</label>
