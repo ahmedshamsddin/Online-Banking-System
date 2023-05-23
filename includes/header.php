@@ -1,13 +1,13 @@
 <?php session_start(); ?>
+       <nav class="navbar navbar-expand-lg navbar-light bg-light">
+       <a class="navbar-brand" href="../homepage/index.php" style="color : #C0392B;"><b>turkish</b></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
- <nav class="navbar navbar-expand-md navbar-light bg-light">
-      <a class="navbar-brand" href="../homepage/index.php" style="color : #C0392B;"><b>turkish</b></a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="collapsibleNavbar">
-            <ul class="navbar-nav ml-auto">
-              <?php if (isset($_SESSION['user_id'])) { ?>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto">
+    <?php if (isset($_SESSION['user_id'])) { ?>
               <li class="nav-item">
                 <a class="nav-link" href="../transaction/index.php" style="color : #C0392B;"><b>Transfer Money</b></a>
               </li>
@@ -34,5 +34,6 @@
                 <a class="nav-link" href="../auth/register.php" style="color : #C0392B;"><b>Register</b></a>
               </li>
               <?php } ?>
-            </div>
-       </nav>
+    </ul>
+  </div>
+</nav>
