@@ -61,7 +61,7 @@ class User extends DB {
             }
             $stmt = null;
         } else {
-            $sql = "UPDATE users SET is_locked = 0 WHERE user_id = ?";
+            $sql = "UPDATE users SET is_locked = 0, login_attempts = 0 WHERE user_id = ?";
             $stmt = $db->prepare($sql);
             if (!$stmt->execute(array($userId))) {
                 $stmt = null;

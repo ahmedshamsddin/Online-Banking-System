@@ -12,7 +12,7 @@
             $mpdf->WriteHTML('<p>Description: ' . $description . '</p>');
             $mpdf->WriteHTML('<p>Date: ' . $date . '</p>');
             
-            $mpdf->Output();
+            $mpdf->Output('reciept.pdf', 'D');
        } 
     }
 ?>

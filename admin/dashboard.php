@@ -18,7 +18,7 @@
 
   function getTransactionsToday () {
     $db = (new DB())->connect();
-    $sql = "SELECT * FROM transactions /*WHERE transaction_date >= CURDATE() ORDER BY transaction_date ASC*/";
+    $sql = "SELECT * FROM transactions WHERE transaction_date >= CURDATE()";
     $stmt = $db->prepare($sql);
     if (!$stmt->execute()) {
         $stmt = null;
@@ -44,11 +44,11 @@
         <div class="dashboard-card transaction-card">
           <h2>Number of Transactions Today</h2>
           <p id="transactionCount"><?php echo $numberOfTransactions ?></p>
-          <p><a href="#transactions">View All Transactions</a></p>
+          <p><a href="transactions.php">View All Transactions</a></p>
         </div>
         <div class="dashboard-card">
           <h2>Login Attempt Log</h2>
-          <p><a href="#loginAttempts">Track Login Attempts</a></p>
+          <p><a href="logs.php">Track Login Attempts</a></p>
         </div>
       </section>
     </div>

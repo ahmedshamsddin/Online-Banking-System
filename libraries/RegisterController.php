@@ -69,7 +69,7 @@ use function PHPSTORM_META\type;
         }
         // Check if the phone number is invalid
         private function invalidPhoneNumber () {
-            $regex = "/(^[0\s]?[\s]?)([(]?)([5])([0-9]{2})([)]?)([\s]?)([0-9]{3})([\s]?)([0-9]{2})([\s]?)([0-9]{2})$/";
+            $regex = "/^(\+90|0)?\s*(\(\d{3}\)[\s-]*\d{3}[\s-]*\d{2}[\s-]*\d{2}|\(\d{3}\)[\s-]*\d{3}[\s-]*\d{4}|\(\d{3}\)[\s-]*\d{7}|\d{3}[\s-]*\d{3}[\s-]*\d{4}|\d{3}[\s-]*\d{3}[\s-]*\d{2}[\s-]*\d{2})$/";
             return preg_match($regex, $this->phoneNumber) !== 1 ? true : false;
         }
         // Check if the date of birth is invalid

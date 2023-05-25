@@ -83,7 +83,7 @@
       <ul>
         <li><a href="dashboard.php">Home</a></li>
         <li><a href="users.php">Users</a></li>
-        <li><a href="#transactions">Transactions</a></li>
+        <li><a href="transactions.php">Transactions</a></li>
         <li><a href="logs.php">Logs</a></li>
       </ul>
     </nav>

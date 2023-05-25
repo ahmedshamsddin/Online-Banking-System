@@ -76,6 +76,14 @@
                         return "incorrect_password";
                     }
                 } else {
+                    // Lock the account
+                    $stmt = "UPDATE users SET is_locked = 1 WHERE username = ? OR email = ?;";
+                    $stmt = $this->connect()->prepare($stmt);
+                    if (!$stmt->execute(array($this->username, $this->username))) {
+                        $stmt = null;
+                        exit();
+                    }
+                    $stmt = null;
                     // Log the failed login
                     Log::log("login", $this->username, 0, "too_many_attempts");
                     return "too_many_attempts";

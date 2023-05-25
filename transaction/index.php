@@ -39,6 +39,7 @@
       }else {
         $transaction->transfer();
         if ($print_reciept == 'print') {
+          Log::log("transaction", $_SESSION['username'], 1, "transaction_success");
           $reciept = new Reciept();
           $reciept->generateReciept($iban, $amount, $description, date("Y-m-d H:i:s"));
         } else {

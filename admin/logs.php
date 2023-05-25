@@ -32,16 +32,15 @@
 ?>
 
 <?php include("includes/header.php"); ?>
+
+<div class="container">
 <?php
     if (isset($_SESSION['FLASH_SUCCESS'])) {
         echo "<div class='alert alert-success'>" . $_SESSION['FLASH_SUCCESS'] . "</div>";
         unset($_SESSION['FLASH_SUCCESS']);
     }
 ?>
-
-<div class="container">
-
-<h1>Logs</h1> 
+<h3>Logs</h3> 
 <form method="POST">
     <button type="submit" class="btn btn-danger" name="clear_logs">Clear Logs</button>
 </form>
