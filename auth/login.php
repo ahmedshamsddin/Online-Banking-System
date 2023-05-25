@@ -18,9 +18,12 @@ if (isset($_POST['submit'])) {
   } elseif ($result == "no_user_found") {
   // If the no user is found, display an error message
     echo '<div class="alert alert-danger mt-2" role="alert">User not found!</div>';
-  } else if ($result == "locked_account") {
+  } else if ($result == "too_many_attempts") {
   // If the password is incorrect, display an error message
-    echo '<div class="alert alert-danger mt-2" role="alert">Your account is locked due to many attempts to login. Please contact the administration through this email: aziz_admin@turkish.com</div>';
+    echo '<div class="alert alert-danger mt-2" role="alert">Your account is locked due to many attempts to login. Please contact the administration through this email: ahmad@turkish.com</div>';
+  } else if ($result == "locked_account") {
+    // If the password is incorrect, display an error message
+      echo '<div class="alert alert-danger mt-2" role="alert">Your account is locked. Please contact the administration through this email: ahmad@turkish.com</div>';
   } else {
     echo '<div class="alert alert-danger mt-2" role="alert">Incorrect password!</div>';
   }

@@ -19,4 +19,17 @@ class Transaction extends DB {
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
+
+    public function getAllTransactions () {
+        $db = $this->connect();
+        $sql = "SELECT * FROM transactions ORDER BY transaction_date ASC";
+        $stmt = $db->prepare($sql);
+        if (!$stmt->execute()) {
+            $stmt = null;
+            exit();
+        }
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
 }

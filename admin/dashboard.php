@@ -1,111 +1,49 @@
 <?php
   session_start();
-  session_regenerate_id();
+  if (isset($_SESSION['user_id'])) {
+    session_unset();
+    session_destroy();
+    header("Location: ../auth/login.php");
+    exit();
+  }
+
   if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit();
   }
+
+  require_once '../libraries/User.php';
+  require_once '../libraries/Transaction.php';
+  require_once '../libraries/DB.php';
+
+  function getTransactionsToday () {
+    $db = (new DB())->connect();
+    $sql = "SELECT * FROM transactions /*WHERE transaction_date >= CURDATE() ORDER BY transaction_date ASC*/";
+    $stmt = $db->prepare($sql);
+    if (!$stmt->execute()) {
+        $stmt = null;
+        exit();
+    }
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return [$result, count($result)];
+}
+
+  $numberOfUsers = (new User())->getNumberUsers();
+  $numberOfTransactions = getTransactionsToday()[1];
 ?>
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Admin Dashboard</title>
-    <style>
-      /* CSS styles for the dashboard */
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-      header {
-        background-color: #333;
-        color: #fff;
-        padding: 10px;
-      }
-      h1 {
-        margin: 0;
-      }
-      nav {
-        background-color: #f4f4f4;
-        padding: 10px;
-      }
-      nav ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-      nav ul li {
-        display: inline;
-        margin-right: 10px;
-      }
-      .container {
-        margin: 20px;
-      }
-      .dashboard-card {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        transition: transform 0.3s ease-in-out;
-      }
-      .dashboard-card:hover {
-        transform: translateY(-5px);
-      }
-      .dashboard-card h2 {
-        margin-top: 0;
-        margin-bottom: 10px;
-        font-size: 18px;
-      }
-      .dashboard-card p {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-      }
-      .dashboard-card.user-card {
-        background-color: #b8d8d8;
-      }
-      .dashboard-card.transaction-card {
-        background-color: #d8b8b8;
-      }
-      .dashboard-card.user-card p,
-      .dashboard-card.transaction-card p {
-        color: #fff;
-      }
-      .dashboard-card a {
-        text-decoration: none;
-        color: #333;
-      }
-      .dashboard-card a:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Admin Dashboard</h1>
-      <button><a href="logout.php">Logout</a></button>
-    </header>
-    <nav>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#users">Users</a></li>
-        <li><a href="#transactions">Transactions</a></li>
-        <li><a href="#loginAttempts">Login Attempts</a></li>
-      </ul>
-    </nav>
+<?php include 'includes/header.php'; ?>
     <div class="container">
       <section id="home">
         <h2>Welcome to the Admin Dashboard</h2>
         <div class="dashboard-card user-card">
           <h2>Number of Users Registered</h2>
-          <p id="userCount">0</p>
-          <p><a href="#users">View All Users</a></p>
+          <p id="userCount"><?php echo $numberOfUsers ?></p>
+          <p><a href="users.php">View All Users</a></p>
         </div>
         <div class="dashboard-card transaction-card">
           <h2>Number of Transactions Today</h2>
-          <p id="transactionCount">0</p>
+          <p id="transactionCount"><?php echo $numberOfTransactions ?></p>
           <p><a href="#transactions">View All Transactions</a></p>
         </div>
         <div class="dashboard-card">

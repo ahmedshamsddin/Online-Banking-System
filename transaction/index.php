@@ -25,12 +25,16 @@
 
       require_once '../libraries/TransactionController.php';
       require_once '../libraries/Reciept.php';
+      require_once '../libraries/Log.php';
 
       $transaction = new TransactionController($_SESSION['user_id'], $iban, $amount, $description);
       // If the transfer method output is not  true, display an error message
       if ($transaction->validInput() == "Invalid IBAN") {
+          // Log the error
+          Log::log("transaction", $_SESSION['username'], 0, "iban_invalid");
           echo '<div class="alert alert-danger mt-2 text-center" role="alert">IBAN Invalid</div>';
       } elseif ($transaction->validInput() == "Insufficient balance") {
+        Log::log("transaction", $_SESSION['username'], 0, "insufficient_balance");
         echo '<div class="alert alert-danger mt-2 text-center" role="alert">Insufficient Balance</div>';
       }else {
         $transaction->transfer();
@@ -38,6 +42,7 @@
           $reciept = new Reciept();
           $reciept->generateReciept($iban, $amount, $description, date("Y-m-d H:i:s"));
         } else {
+          Log::log("transaction", $_SESSION['username'], 1, "transaction_success");
           echo '<div class="alert alert-success mt-2 text-center" role="alert">Transaction Successfull!</div>';
         }
       }
