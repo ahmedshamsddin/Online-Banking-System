@@ -23,6 +23,7 @@
           <th>Amount</th>
           <th>Date</th>
           <th>Description</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -37,6 +38,7 @@
             <td><?php echo $transactions[$i]['amount'] ?></td>
             <td><?php echo $transactions[$i]['transaction_date'] ?></td>
             <td><?php echo $transactions[$i]['description'] ?></td>
+            <td><button class="btn btn-primary" onclick="location.href='../reciepts/<?php echo $transactions[$i]['reciept'] ?>'">Reciept</button></td>
           </tr>
         <?php } ?>
         <?php } ?>

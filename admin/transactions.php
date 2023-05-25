@@ -46,6 +46,7 @@
                 <th>Amount</th>
                 <th>Date</th>
                 <th>Description</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -56,6 +57,7 @@
                     <td><?php echo $transaction['amount'] ?> TL</td>
                     <td><?php echo $transaction['transaction_date'] ?></td>
                     <td><?php echo $transaction['description'] ?></td>
+                    <td><button class="btn btn-primary" onclick="location.href='../reciepts/<?php echo $transaction['reciept'] ?>'">Reciept</button></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

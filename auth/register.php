@@ -14,38 +14,6 @@ if (isset($_POST['submit'])) {
   $occupation = $_POST['occupation'];
   $personalPhoto = $_FILES['photo'];
   
-  if (is_uploaded_file($personalPhoto['tmp_name'])) {
-    $personalPhotoName = $personalPhoto['name'];
-    $personalPhotoTmpName = $personalPhoto['tmp_name'];
-    $personalPhotoSize = $personalPhoto['size'];
-    $personalPhotoError = $personalPhoto['error'];
-    $personalPhotoType = $personalPhoto['type'];
-    
-    $personalPhotoExt = explode('.', $personalPhotoName);
-    $personalPhotoActualExt = strtolower(end($personalPhotoExt));
-    
-    $allowed = array('jpg', 'jpeg', 'png');
-    
-    if (in_array($personalPhotoActualExt, $allowed)) {
-      if ($personalPhotoError === 0) {
-        if ($personalPhotoSize < 5000000) {
-          $personalPhotoNameNew = uniqid('', true) . "." . $personalPhotoActualExt;
-          $personalPhotoDestination = '../upload/profile_picture/' . $personalPhotoNameNew;
-          move_uploaded_file($personalPhotoTmpName, $personalPhotoDestination);
-        } else {
-          echo '<div class="alert alert-danger mt-2 text-center" role="alert">Your photo is too big!</div>';
-          exit();
-        }
-      } else {
-        echo '<div class="alert alert-danger mt-2 text-center" role="alert">There was an error uploading your photo!</div>';
-        exit();
-      }
-    } else {
-      echo '<div class="alert alert-danger mt-2 text-center" role="alert">You cannot upload files of this type!</div>';
-      exit();
-    }
-}
-  
   require_once '../libraries/RegisterController.php';
 
   $personalPhotoNameNew = $personalPhotoNameNew ?? null;
@@ -56,6 +24,37 @@ if (isset($_POST['submit'])) {
       echo '<div class="alert alert-danger mt-2 text-center" role="alert">' . $error . '</div>';
     }
   } else {
+    if (is_uploaded_file($personalPhoto['tmp_name'])) {
+      $personalPhotoName = $personalPhoto['name'];
+      $personalPhotoTmpName = $personalPhoto['tmp_name'];
+      $personalPhotoSize = $personalPhoto['size'];
+      $personalPhotoError = $personalPhoto['error'];
+      $personalPhotoType = $personalPhoto['type'];
+      
+      $personalPhotoExt = explode('.', $personalPhotoName);
+      $personalPhotoActualExt = strtolower(end($personalPhotoExt));
+      
+      $allowed = array('jpg', 'jpeg', 'png');
+      
+      if (in_array($personalPhotoActualExt, $allowed)) {
+        if ($personalPhotoError === 0) {
+          if ($personalPhotoSize < 5000000) {
+            $personalPhotoNameNew = uniqid('', true) . "." . $personalPhotoActualExt;
+            $personalPhotoDestination = '../upload/profile_picture/' . $personalPhotoNameNew;
+            move_uploaded_file($personalPhotoTmpName, $personalPhotoDestination);
+          } else {
+            echo '<div class="alert alert-danger mt-2 text-center" role="alert">Your photo is too big!</div>';
+            exit();
+          }
+        } else {
+          echo '<div class="alert alert-danger mt-2 text-center" role="alert">There was an error uploading your photo!</div>';
+          exit();
+        }
+      } else {
+        echo '<div class="alert alert-danger mt-2 text-center" role="alert">You cannot upload files of this type!</div>';
+        exit();
+      }
+  }
     header("location: login.php");
   }
 }

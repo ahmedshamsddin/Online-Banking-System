@@ -9,14 +9,16 @@ class TransactionController extends DB {
     private $iban;
     private $amount;
     private $description;
+    private $reciept;
 
     // Constructor for the TransactionController class
-    public function __construct ($senderId, $iban, $amount, $description) {
+    public function __construct ($senderId, $iban, $amount, $description, $reciept) {
         $this->senderId = $senderId;
         $this->iban = $iban;
         $this->amount = $amount;
         $this->description = $description;
         $this->id = (new User())->getAccount($senderId)['account_id'];
+        $this->reciept = $reciept;
     }
 
     // Get reciever account id from iban
@@ -87,9 +89,9 @@ class TransactionController extends DB {
     public function transfer () {
         // Add transaction to the database
         $db = self::connect();
-        $sql = "INSERT INTO transactions (sender_account_id, receiver_account_id, amount, transaction_date, description) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO transactions (sender_account_id, receiver_account_id, amount, transaction_date, description, reciept) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        if (!$stmt->execute(array($this->id, $this->getRecieverAccount(), $this->amount, date("Y-m-d H:i:s"), $this->description))) {
+        if (!$stmt->execute(array($this->id, $this->getRecieverAccount(), $this->amount, date("Y-m-d H:i:s"), $this->description, $this->reciept))) {
             $stmt = null;
             exit();
         }
