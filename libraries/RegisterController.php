@@ -155,16 +155,63 @@ use function PHPSTORM_META\type;
                 $stmt = null;
                 exit();
             }
-            for ($i = 0; $i < $stmt->rowCount(); $i++) {
-                $idNumber = $stmt->fetchAll(PDO::FETCH_ASSOC)[$i]['id_number'];
-                if (Encryption::compare($this->idNumber, $idNumber)) {
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($results as $result) {
+                if (Encryption::compare($this->idNumber, $result['id_number'])) {
                     return true;
                 }
             }
+
+            return false;
         }
-        private function invalidPersonalPhoto () {
+
+        private function checkPersonalPhoto () {
+            if (is_uploaded_file($this->personalPhoto['tmp_name'])) {
+                $personalPhotoName = $this->personalPhoto['name'];
+                $personalPhotoTmpName = $this->personalPhoto['tmp_name'];
+                $personalPhotoSize = $this->personalPhoto['size'];
+                $personalPhotoError = $this->personalPhoto['error'];
+                $personalPhotoType = $this->personalPhoto['type'];
+                
+                $personalPhotoExt = explode('.', $personalPhotoName);
+                $personalPhotoActualExt = strtolower(end($personalPhotoExt));
+                
+                $allowed = array('jpg', 'jpeg', 'png');
+                
+                if (in_array($personalPhotoActualExt, $allowed)) {
+                  if ($personalPhotoError === 0) {
+                    if ($personalPhotoSize < 5000000) {
+                        /*$personalPhotoNameNew = uniqid('', true) . "." . $personalPhotoActualExt;
+                        $personalPhotoDestination = '../upload/profile_picture/' . $personalPhotoNameNew;
+                        move_uploaded_file($personalPhotoTmpName, $personalPhotoDestination);*/
+                        return "valid";
+                    } else {
+                      return 'Your photo is too big!';
+                    }
+                  } else {
+                    return 'There was an error uploading your photo!';
+                  }
+                } else {
+                  return 'You cannot upload files of this type!';
+                }
+            } else {
+              return 'You did not upload a photo!';
+            }
+        }
+
+        private function uploadPersonalPhoto () {
+            $personalPhotoName = $this->personalPhoto['name'];
+            $personalPhotoTmpName = $this->personalPhoto['tmp_name'];
             
-        }
+            $personalPhotoExt = explode('.', $personalPhotoName);
+            $personalPhotoActualExt = strtolower(end($personalPhotoExt));
+
+            $personalPhotoNameNew = uniqid('', true) . "." . $personalPhotoActualExt;
+            $personalPhotoDestination = '../upload/profile_picture/' . $personalPhotoNameNew;
+            move_uploaded_file($personalPhotoTmpName, $personalPhotoDestination);
+            return $personalPhotoNameNew;
+        } 
+
         // Check if the all input is valid
         private function validInput () {
             $errors = [];
@@ -193,8 +240,8 @@ use function PHPSTORM_META\type;
             if ($this->invalidIDNumber() == true) {
                 array_push($errors, "This ID number is invalid");
             }
-            if ($this->personalPhoto == null) {
-                array_push($errors, "You must upload a personal photo");
+            if ($this->checkPersonalPhoto() != "valid") {
+                array_push($errors, $this->checkPersonalPhoto());
             }
             return $errors;
         }
@@ -207,6 +254,7 @@ use function PHPSTORM_META\type;
             }
             return $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['user_id'];
         }
+
         // Register the user
         public function registerUser () {
             // Create a new AccountController object
@@ -229,7 +277,10 @@ use function PHPSTORM_META\type;
                 // Remove spaces from phone number
                 $formattedPhoneNumber = str_replace(' ', '', $this->phoneNumber);
 
-                if (!$stmt->execute(array($this->username, $hashed_pwd, $this->email, $this->fullName, $formattedDOB, $formattedPhoneNumber, $encryptedIDNumber, $this->personalPhoto))) {
+                // Upload the personal photo
+                $personalPhotoNameNew = $this->uploadPersonalPhoto();
+
+                if (!$stmt->execute(array($this->username, $hashed_pwd, $this->email, $this->fullName, $formattedDOB, $formattedPhoneNumber, $encryptedIDNumber, $personalPhotoNameNew))) {
                     $stmt = null;
                     exit();
                 }

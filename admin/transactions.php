@@ -1,12 +1,13 @@
 <?php
   session_start();
+    // Check if a user account is already logged in
   if (isset($_SESSION['user_id'])) {
     session_unset();
     session_destroy();
     header("Location: ../auth/login.php");
     exit();
   }
-
+  // Check if no admin account is already logged in
   if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit();
@@ -14,6 +15,7 @@
 
     require_once '../libraries/DB.php';
     require_once '../libraries/User.php';
+    // Function to get the full name of a user using their account id
     function getUserFullname ($accountId) {
         $db = (new DB())->connect();
         $sql = "SELECT accounts.account_id, users.full_name FROM accounts INNER JOIN users ON accounts.user_id = users.user_id WHERE accounts.account_id = ?";

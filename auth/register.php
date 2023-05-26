@@ -2,59 +2,26 @@
 <?php 
 session_start();
 if (isset($_POST['submit'])) {
-  
-  $username = $_POST['username'];
-  $fullName = $_POST['firstName'] . " " . $_POST['lastName'];
-  $password = $_POST['password'];
-  $repeatPassword = $_POST['repeatPassword'];
-  $email = $_POST['email'];
-  $idNumber = $_POST['idNumber'];
-  $dob = $_POST['dob'];
-  $phoneNumber = $_POST['phoneNumber'];
-  $occupation = $_POST['occupation'];
+  // Filter the input data to prevent XSS attacks
+  $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
+  $fullName = htmlspecialchars($_POST['firstName'] . " " . $_POST['lastName'], ENT_QUOTES,'UTF-8');
+  $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
+  $repeatPassword = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
+  $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+  $idNumber = htmlspecialchars($_POST['idNumber'], ENT_QUOTES,'UTF-8');
+  $dob = filter_input(INPUT_POST, 'dob', FILTER_SANITIZE_SPECIAL_CHARS);
+  $phoneNumber = filter_input(INPUT_POST, 'phoneNumber', FILTER_SANITIZE_NUMBER_INT);
+  $occupation = filter_input(INPUT_POST, 'occupation', FILTER_SANITIZE_SPECIAL_CHARS);
   $personalPhoto = $_FILES['photo'];
-  
-  require_once '../libraries/RegisterController.php';
 
-  $personalPhotoNameNew = $personalPhotoNameNew ?? null;
-  $register = new RegisterController($username, $fullName, $password, $repeatPassword, $email, $idNumber, $dob, $phoneNumber, $occupation, $personalPhotoNameNew);
+  require_once '../libraries/RegisterController.php';
+  $register = new RegisterController($username, $fullName, $password, $repeatPassword, $email, $idNumber, $dob, $phoneNumber, $occupation, $personalPhoto);
 
   if (count($register->registerUser()) > 0) {
     foreach ($register->registerUser() as $error) {
       echo '<div class="alert alert-danger mt-2 text-center" role="alert">' . $error . '</div>';
     }
   } else {
-    if (is_uploaded_file($personalPhoto['tmp_name'])) {
-      $personalPhotoName = $personalPhoto['name'];
-      $personalPhotoTmpName = $personalPhoto['tmp_name'];
-      $personalPhotoSize = $personalPhoto['size'];
-      $personalPhotoError = $personalPhoto['error'];
-      $personalPhotoType = $personalPhoto['type'];
-      
-      $personalPhotoExt = explode('.', $personalPhotoName);
-      $personalPhotoActualExt = strtolower(end($personalPhotoExt));
-      
-      $allowed = array('jpg', 'jpeg', 'png');
-      
-      if (in_array($personalPhotoActualExt, $allowed)) {
-        if ($personalPhotoError === 0) {
-          if ($personalPhotoSize < 5000000) {
-            $personalPhotoNameNew = uniqid('', true) . "." . $personalPhotoActualExt;
-            $personalPhotoDestination = '../upload/profile_picture/' . $personalPhotoNameNew;
-            move_uploaded_file($personalPhotoTmpName, $personalPhotoDestination);
-          } else {
-            echo '<div class="alert alert-danger mt-2 text-center" role="alert">Your photo is too big!</div>';
-            exit();
-          }
-        } else {
-          echo '<div class="alert alert-danger mt-2 text-center" role="alert">There was an error uploading your photo!</div>';
-          exit();
-        }
-      } else {
-        echo '<div class="alert alert-danger mt-2 text-center" role="alert">You cannot upload files of this type!</div>';
-        exit();
-      }
-  }
     header("location: login.php");
   }
 }
@@ -141,7 +108,7 @@ if (isset($_POST['submit'])) {
         </div>
       <div class="form-group">
         <label for="photo">Personal Photo:</label>
-        <input type="file" name="photo">
+        <input type="file" name="photo" required>
       </div>
        
 

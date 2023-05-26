@@ -8,11 +8,16 @@
 </head>
 <body>
 <?php include('../includes/header.php'); ?>
-<?php if (isset($_SESSION['user_id'])) { ?>
+<?php 
+  // Check if the user is logged in
+  if (isset($_SESSION['user_id'])) { ?>
 
   <?php
+    // Include the database configuration file
     require_once '../libraries/User.php';
+    // Include the Encryption file
     require_once '../libraries/Encryption.php';
+    // Initialize the User object and decrypt the account number and IBAN
     $account = new User();
     $accountDetails = $account->getAccount($_SESSION['user_id']);
     $decryptedAccountNumber = Encryption::decrypt($accountDetails['account_number']);

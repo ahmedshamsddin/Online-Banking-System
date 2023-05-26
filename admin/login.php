@@ -1,18 +1,20 @@
 <?php
   session_start();
+  // Check if a user account is already logged in
   if (isset($_SESSION['user_id'])) {
     session_unset();
     session_destroy();
     header("Location: login.php");
     exit();
   }
-
+  // Check if post request is sent
   if (isset($_POST['submit'])) {
+    // Filter the username and password to prevent XSS attacks
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
     $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
 
     require_once '../libraries/DB.php';
-    
+    // Get the username from the database (? is used to prevent SQL injection)
     $db = new DB();
     $sql = "SELECT username FROM admins WHERE username = ?";
     $stmt = $db->connect()->prepare($sql);
@@ -20,7 +22,7 @@
       $stmt = null;
       exit();
     };
-
+    // Check if the username exists
     if ($stmt->rowCount() > 0) {
       $sql = "SELECT pwd_hash FROM admins WHERE username = ?";
       $stmt = $db->connect()->prepare($sql);
@@ -29,6 +31,7 @@
         exit();
       };
       $hash = $stmt->fetchAll(PDO::FETCH_ASSOC)[0]["pwd_hash"];
+      // Check if the password is correct
       if (password_verify($password, $hash)) {
         session_start();
         $_SESSION['admin'] = $username;

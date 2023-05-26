@@ -1,12 +1,13 @@
 <?php
   session_start();
+  // Check if a user account is already logged in
   if (isset($_SESSION['user_id'])) {
     session_unset();
     session_destroy();
     header("Location: ../auth/login.php");
     exit();
   }
-
+  // Check if no admin account is already logged in
   if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit();
@@ -15,7 +16,7 @@
   require_once '../libraries/User.php';
   require_once '../libraries/Transaction.php';
   require_once '../libraries/DB.php';
-
+  // Function to get the number of transactions today
   function getTransactionsToday () {
     $db = (new DB())->connect();
     $sql = "SELECT * FROM transactions WHERE transaction_date >= CURDATE()";
@@ -27,8 +28,9 @@
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     return [$result, count($result)];
 }
-
+  // Initialize the User object and get the number of users
   $numberOfUsers = (new User())->getNumberUsers();
+  // User the getTransactionsToday function to get the number of transactions
   $numberOfTransactions = getTransactionsToday()[1];
 ?>
 
@@ -52,23 +54,5 @@
         </div>
       </section>
     </div>
-    <script>
-      // JavaScript code to fetch data and update the dashboard
-      // Fetch user count from an API endpoint and update the count
-      fetch("/api/user-count")
-        .then((response) => response.json())
-        .then((data) => {
-          const userCountElement = document.querySelector("#userCount");
-          userCountElement.textContent = data.count;
-        });
-      // Fetch transaction count from an API endpoint and update the count
-      fetch("/api/transaction-count")
-        .then((response) => response.json())
-        .then((data) => {
-          const transactionCountElement =
-            document.querySelector("#transactionCount");
-          transactionCountElement.textContent = data.count;
-        });
-    </script>
   </body>
 </html>
