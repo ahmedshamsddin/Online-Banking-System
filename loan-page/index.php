@@ -24,8 +24,9 @@ function userApplication () {
       exit();
   }
   $application = $stmt->fetch(PDO::FETCH_ASSOC);
-  $color = $application['status'] == "pending" ? "warning" : ($application['status'] == "approved" ? "success" : "danger");
-  if (count($application) > 0) {
+  
+  if (is_array($application)) {
+    $color = $application['status'] == "pending" ? "warning" : ($application['status'] == "approved" ? "success" : "danger");
     return [$application['status'], $color, $application['result']];
   } else {
     return false;

@@ -51,7 +51,6 @@
 <?php include 'includes/header.php'; ?>
 <div class="container">
 <?php
-    session_start();
     if (isset($_SESSION["FLASH_SUCCESS"])) {
     // Check if a flash message is set and display it
     echo "<div class='alert alert-success' role='alert'>" .
