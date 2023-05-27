@@ -7,74 +7,106 @@
   <link rel="stylesheet" type="text/css" href="../static/css/navbar.css">
 </head>
 <body>
-<?php include('../includes/header.php'); ?>
+<?php include ('../includes/header.php'); ?>
+
+<?php
+
+require '../libraries/DB.php';
+require '../libraries/User.php';
+
+function userApplication () {
+  $db = new DB();
+  $db = $db->connect();
+  $sql = "SELECT * FROM loan_applications WHERE user_id = ?";
+  $stmt = $db->prepare($sql);
+  if (!$stmt->execute(array($_SESSION['user_id']))) {
+      $stmt = null;
+      exit();
+  }
+  $application = $stmt->fetch(PDO::FETCH_ASSOC);
+  $color = $application['status'] == "pending" ? "warning" : ($application['status'] == "approved" ? "success" : "danger");
+  if (count($application) > 0) {
+    return [$application['status'], $color, $application['result']];
+  } else {
+    return false;
+  }
+}
+
+if (isset($_POST['submit'])) {
+  function applyLoan ($fileNameNew) {
+    
+    $user = new User();
+    $userId = $_SESSION['user_id'];
+    $fullName = $user->getUser($userId)['full_name'];
+
+    $db = new DB();
+    $db = $db->connect();
+    $sql = "INSERT INTO loan_applications (applicant_name, user_id, file_name, application_date) VALUES (?, ?, ?, NOW())";
+    $stmt = $db->prepare($sql);
+    if (!$stmt->execute(array($fullName, $_SESSION['user_id'], $fileNameNew))) {
+        $stmt = null;
+        exit();
+    }
+  }
+
+    $file = $_FILES['file'];
+    $fileName = $_FILES['file']['name'];
+    $fileTmpName = $_FILES['file']['tmp_name'];
+    $fileSize = $_FILES['file']['size'];
+    $fileError = $_FILES['file']['error'];
+    $fileType = $_FILES['file']['type'];
+    $fileExt = explode('.', $fileName);
+    $fileActualExt = strtolower(end($fileExt));
+    $allowed = array('pdf');
+    if (in_array($fileActualExt, $allowed)) {
+        if ($fileError === 0) {
+            if ($fileSize < 1000000) {
+                $fileNameNew = uniqid('', true) . "." . $fileActualExt;
+                $fileDestination = '../upload/loan_applications/' . $fileNameNew;
+                applyLoan($fileNameNew);
+                move_uploaded_file($fileTmpName, $fileDestination);
+                echo '<div class="alert alert-success mt-2 text-center" role="alert">Your form was successfully uploaded</div>';
+            } else {
+                echo '<div class="alert alert-danger mt-2 text-center" role="alert">Your file is too big</div>';
+            }
+        } else {
+            echo '<div class="alert alert-danger mt-2 text-center" role="alert">There was an error uploading your file</div>';
+        }
+    } else {
+        echo '<div class="alert alert-danger mt-2 text-center" role="alert">You cannot upload files of this type</div>';
+    }
+
+    
+}
+?>
+
+
 <?php if (isset($_SESSION['user_id'])) { ?>
-<div class="form-group">
-          <label for="loanTerm">Loan Term:</label>
-          <input type="number" id="loanTerm" min="0" name="loanTerm" required>
-        </div>
-        <div class="form-group">
-          <label for="interestRateType">Preferred Interest Rate Type:</label>
-          <select id="interestRateType" name="interestRateType" required>
-            <option value="fixed">Fixed</option>
-            <option value="variable">Variable</option>
-          </select>
-        </div>
-      </fieldset>
+        <?php $application = userApplication();
+              if (is_array($application)) { 
+        ?>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                Your application status is: <span class="text-<?php echo $application[1]?>"><?php echo ucfirst($application[0]) ?></span><br>
 
-      <fieldset>
-        <legend>Financial Information</legend>
-        <div class="form-group">
-          <label for="bankAccounts">Current Bank Accounts:</label>
-          <textarea id="bankAccounts" name="bankAccounts" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="otherLoansDebts">Other Loans or Debts:</label>
-          <textarea id="otherLoansDebts" name="otherLoansDebts" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="monthlyExpenses">Monthly Expenses:</label>
-          <textarea id="monthlyExpenses" name="monthlyExpenses" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="assets">Assets:</label>
-          <textarea id="assets" name="assets" required></textarea>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Supporting Documents</legend>
-        <div class="form-group">
-          <label for="identificationProof">Identification Proof:</label>
-          <input type="file" id="identificationProof" name="identificationProof" required>
-        </div>
-        <div class="form-group">
-          <label for="incomeProof">Proof of Income:</label>
-          <input type="file" id="incomeProof" name="incomeProof" required>
-        </div>
-        <div class="form-group">
-          <label for="bankStatements">Bank Statements:</label>
-          <input type="file" id="bankStatements" name="bankStatements" required>
-        </div>
-        <div class="form-group">
-          <label for="additionalDocuments">Additional Documents:</label>
-          <input type="file" id="additionalDocuments" name="additionalDocuments" required multiple>
-        </div>
-      </fieldset>
-
-      <div class="form-group">
-        <input type="checkbox" id="termsAgreement" required>
-        <label for="termsAgreement">I agree to the terms and conditions of the loan application.</label>
-      </div>
-
-      <button type="submit" class="submit-button">Submit Application</button>
-    </form>
-  </div>
-  <?php } else { 
-    header('Location: ../auth/login.php');
-  } ?>
-  <?php include('../includes/footer.php'); ?>
+                <?php if ($application[0] == "approved" || $application[0] == "rejected") { ?>
+                  <h3>Result:</h3> <?php echo $application[2] ?>
+                <?php } ?>
+              </div>
+            </div>
+          </div>
+        <?php } else { ?>
+          <?php include ('inc/loan-form.php'); ?>
+      <?php } ?>
+  <?php
+    } else {
+      header('Location: ../auth/login.php');
+    } 
+  ?>
+  <?php include ('../includes/footer.php'); ?>
   <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
 </html>
 

@@ -52,6 +52,10 @@
           <h2>Login Attempt Log</h2>
           <p><a href="logs.php">Track Login Attempts</a></p>
         </div>
+        <div class="dashboard-card user-card">
+          <h2>Pending Loan Applications</h2>
+          <p><a href="applications.php">View All Pending Applications</a></p>
+        </div>
       </section>
     </div>
   </body>

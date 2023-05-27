@@ -85,5 +85,6 @@
         <li><a href="users.php">Users</a></li>
         <li><a href="transactions.php">Transactions</a></li>
         <li><a href="logs.php">Logs</a></li>
+        <li><a href="applications.php">Applications</a></li>
       </ul>
     </nav>

@@ -36,8 +36,9 @@ $users = (new User())->getAllUsers();
 <?php include "includes/header.php"; ?>
 
 <div class="container">
-  // Check if a flash message is set and display it
+  
 <?php if (isset($_SESSION["FLASH_SUCCESS"])) {
+  // Check if a flash message is set and display it
     echo "<div class='alert alert-success' role='alert'>" .
         $_SESSION["FLASH_SUCCESS"] .
         "</div>";
