@@ -12,13 +12,13 @@
 
   <?php
     if (isset($_POST['submit'])) {
-      $iban = $_POST['iban'];
-      $amount = $_POST['amount'];
+      $iban = htmlspecialchars($_POST['iban']);
+      $amount = htmlspecialchars($_POST['amount']);
       
       if (empty($_POST['description'])) {
         $description = "No description provided";
       } else {
-        $description = $_POST['description'];
+        $description = htmlspecialchars($_POST['description']);
       }
 
       $print_reciept = $_POST['print'] ?? null;
